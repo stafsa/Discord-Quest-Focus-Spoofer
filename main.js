@@ -1,26 +1,20 @@
-webpackChunkdiscord_app.push([
-  [Math.random()],
-  {},
-  req => {
-    for (const id in req.c) {
-      try {
-        const exp = req.c[id].exports;
-        if (!exp) continue;
+const ws = window.__focusCandidate;
 
-        for (const key in exp) {
-          if (key === "WindowStore") {
-            window.__ws = exp[key];
-            console.log("FOUND WINDOWSTORE", exp[key]);
-          }
-        }
-      } catch {}
-    }
-  }
-]);
-__ws.isFocused = () => true;
-__ws.isAppFocused = () => true;
-__ws.isVisible = () => true;
-__ws.getFocusedWindowId = () => 1;
-__ws.getLastFocusedWindowId = () => 1;
+if (!ws) {
+    console.error("Couldn't find the focus store.");
+} else {
+    window.__originalFocusMethods ??= {
+        isFocused: ws.isFocused,
+        isAppFocused: ws.isAppFocused,
+        isVisible: ws.isVisible,
+        getFocusedWindowId: ws.getFocusedWindowId,
+        getLastFocusedWindowId: ws.getLastFocusedWindowId
+    };
 
-console.log("WindowStore patched.");
+    ws.isFocused = () => true;
+    ws.isAppFocused = () => true;
+    ws.isVisible = () => true;
+    ws.getFocusedWindowId = () => "window-1";
+    ws.getLastFocusedWindowId = () => "window-1";
+    console.log("Patched the focus store.");
+}
